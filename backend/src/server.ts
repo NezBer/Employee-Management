@@ -1,15 +1,9 @@
-import express from "express";
+import { log } from "node:console";
+import app from "./app";
 
-const app = express();
-
-app.use(express.json());
-
-const PORT  = 3000;
-
-app.get("/", (req, res) => {
-    res.send("Employee Management API");
-});
+const PORT = 3000;
 
 app.listen(PORT, () => {
-    console.log(`Server running on port  ${PORT}`);
+    console.log(`Server running in port ${PORT}`);
+    
 });
