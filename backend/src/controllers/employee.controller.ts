@@ -28,3 +28,7 @@ let employees : Employee[] = [
 export const getEmployees = (req: Request,res : Response) => {
     res.json(employees);
 };
+export const getEmployeesID = (req: Request,res: Response) => {
+    const employee = employees.find((emp) => emp.id === Number(req.params.id));
+    res.json(employee);
+};
