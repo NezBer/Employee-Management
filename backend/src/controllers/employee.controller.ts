@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import pool from "../config/database"
+import { RowDataPacket } from "mysql2";
 
 interface Employee {
     id: number;
@@ -33,8 +34,12 @@ export const getEmployees = async (req:Request, res: Response) => {
     res.json(rows)
 };
 export const getEmployeesID = async (req: Request,res: Response) => {
-    const [rows] = await pool.query("SELECT emp_code , emp_fname, emp_lname , emp_phone , emp_salary ,dpm_id , role_id FROM employees WHERE emp_code = ?",
+    const [rows] = await pool.query<RowDataPacket[]>("SELECT emp_code , emp_fname, emp_lname , emp_phone , emp_salary ,dpm_id , role_id FROM employees WHERE emp_code = ?",
         [req.params.id]
      )
-     res.json(rows);
+     if(rows.length === 0) {
+        res.status(404).json({message: "Employee not found"})
+     } else {
+        res.json(rows);
+     }
 };
