@@ -30,5 +30,9 @@ export const getEmployees = (req: Request,res : Response) => {
 };
 export const getEmployeesID = (req: Request,res: Response) => {
     const employee = employees.find((emp) => emp.id === Number(req.params.id));
-    res.json(employee);
+    if (employee === undefined) {
+    res.status(404).json({message: "Employee not found"});
+    } else {
+        res.json(employee);
+    }
 };
