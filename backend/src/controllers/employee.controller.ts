@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import pool from "../config/database"
 
 interface Employee {
     id: number;
@@ -25,14 +26,15 @@ let employees : Employee[] = [
     }
 ];
 
-export const getEmployees = (req: Request,res : Response) => {
-    res.json(employees);
+
+
+export const getEmployees = async (req:Request, res: Response) => {
+    const [rows] = await pool.query ("SELECT emp_code , emp_fname, emp_lname , emp_phone , emp_salary ,dpm_id , role_id FROM employees");
+    res.json(rows)
 };
-export const getEmployeesID = (req: Request,res: Response) => {
-    const employee = employees.find((emp) => emp.id === Number(req.params.id));
-    if (employee === undefined) {
-    res.status(404).json({message: "Employee not found"});
-    } else {
-        res.json(employee);
-    }
+export const getEmployeesID = async (req: Request,res: Response) => {
+    const [rows] = await pool.query("SELECT emp_code , emp_fname, emp_lname , emp_phone , emp_salary ,dpm_id , role_id FROM employees WHERE emp_code = ?",
+        [req.params.id]
+     )
+     res.json(rows);
 };
