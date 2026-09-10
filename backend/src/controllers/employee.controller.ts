@@ -43,3 +43,22 @@ export const getEmployeesID = async (req: Request,res: Response) => {
         res.json(rows);
      }
 };
+
+export const addEmployee = async (req:Request,res:Response) => {
+    const input = req.body
+    const [data] = await pool.query (
+        `INSERT INTO employees
+        (emp_code , emp_fname, emp_lname , emp_phone , emp_salary ,dpm_id , role_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+        input.emp_code,
+        input.emp_fname,
+        input.emp_lname,
+        input.emp_phone,
+        input.emp_salary,
+        input.dpm_id,
+        input.role_id
+        ]
+    ) 
+    res.status(201).json({message:"Success"})
+}
