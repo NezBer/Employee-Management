@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import pool from "../config/database"
-import { RowDataPacket } from "mysql2";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
 
 interface Employee {
     id: number;
@@ -34,7 +34,7 @@ export const getEmployees = async (req:Request, res: Response) => {
     res.json(rows)
 };
 export const getEmployeesID = async (req: Request,res: Response) => {
-    const [rows] = await pool.query<RowDataPacket[]>("SELECT emp_code , emp_fname, emp_lname , emp_phone , emp_salary ,dpm_id , role_id FROM employees WHERE emp_code = ?",
+    const [rows] = await pool.query<RowDataPacket[]>("SELECT emp_code , emp_fname, emp_lname , emp_phone , emp_salary ,dpm_id , role_id FROM employees WHERE emp_id = ?",
         [req.params.id]
      )
      if(rows.length === 0) {
@@ -62,3 +62,26 @@ export const addEmployee = async (req:Request,res:Response) => {
     ) 
     res.status(201).json({message:"Success"})
 }
+
+export const updateEmployee = async (req:Request,res:Response) => {
+    const input = req.body
+    const data = req.params.id
+    const [result] = await pool.query<ResultSetHeader> (
+        `UPDATE employees SET emp_fname = ?, emp_lname = ?, emp_phone = ?, emp_salary = ?,dpm_id = ?, role_id = ? WHERE emp_id = ?`,
+        [
+        input.emp_fname,
+        input.emp_lname,
+        input.emp_phone,
+        input.emp_salary,
+        input.dpm_id,
+        input.role_id,
+        data
+        ]
+    );
+    if (result.affectedRows == 0 ) {
+        res.status(404).json({message: "Employee not found"});
+
+    } else {
+        res.status(200).json({message: "Success"});
+    }
+};
