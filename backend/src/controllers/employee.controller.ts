@@ -30,7 +30,7 @@ let employees : Employee[] = [
 
 
 export const getEmployees = async (req:Request, res: Response) => {
-    const [rows] = await pool.query ("SELECT emp_code , emp_fname, emp_lname , emp_phone , emp_salary ,dpm_id , role_id FROM employees");
+    const [rows] = await pool.query ("SELECT emp_code , emp_fname, emp_lname , emp_phone , emp_salary ,dpm_id , role_id FROM employees WHERE is_deleted = 0");
     res.json(rows)
 };
 export const getEmployeesID = async (req: Request,res: Response) => {
@@ -77,6 +77,22 @@ export const updateEmployee = async (req:Request,res:Response) => {
         input.role_id,
         data
         ]
+    );
+    if (result.affectedRows == 0 ) {
+        res.status(404).json({message: "Employee not found"});
+
+    } else {
+        res.status(200).json({message: "Success"});
+    }
+};
+
+export const delflgEmployee = async (req:Request,res:Response) => {
+    const data = req.params.id
+    const [result] = await pool.query<ResultSetHeader> (
+        `UPDATE employees
+        SET is_deleted = 1
+        WHERE emp_id = ?`,
+        [data]
     );
     if (result.affectedRows == 0 ) {
         res.status(404).json({message: "Employee not found"});
